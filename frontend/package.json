@@ -28,7 +28,7 @@
     "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.0.2",
     "react-toastify": "^10.0.6",
-    "three": "^0.172.0",
+    "three": "^0.173.0",
     "typed.js": "^2.1.0"
   },
   "devDependencies": {
