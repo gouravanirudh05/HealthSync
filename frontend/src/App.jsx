@@ -17,6 +17,7 @@ import DoctorDashboard from "./pages/DoctorDashboard";
 import AdminDashboard from "./pages/Admindashboard";
 import RegisterPatient from "./pages/RegisterPatient";
 import RegisterDoctor from "./pages/RegisterDoctor";
+import PatientHistory from "./pages/PatientHistory";
 import About from "./pages/About";
 import LandingPage from "./pages/LandingPage";
 import MeetingRoom from "./pages/MeetingRoom";
@@ -45,6 +46,7 @@ const App = () => {
             <Route path="/schedule-appointment" element={<AppointmentForm />} />
             <Route path="/register-patient" element={<RegisterPatient />} />
             <Route path="/register-doctor" element={<RegisterDoctor />} />
+            <Route path="/patient/:patientId" element={<PatientHistory />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/meeting-room/*" element={<MeetingRoom />} />
           </Routes>

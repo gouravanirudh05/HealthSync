@@ -8,14 +8,22 @@ import Appointment from "./models/appointmentModel.js"
 import Patient from "./models/patientModel.js"
 import Admin from "./models/adminModel.js";
 import Report from "./models/reportModel.js";
+import Prescription from "./models/prescriptionModel.js";
 import patientAuthMiddleware from "./middlewares/patientAuthMiddleware.js";
 import doctorAuthMiddleware from "./middlewares/doctorAuthMiddleware.js";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import Prescription from "./models/prescriptionModel.js";
+import pkg from 'agora-access-token';
+import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 
 dotenv.config();
+
+const APP_ID = "252142d27f2a41b083a166b76c41d881";
+const APP_CERTIFICATE = "c8970cde26054522ac9ead01ea602ba1";
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const { RtcTokenBuilder, RtcRole } = pkg;
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -59,6 +67,30 @@ app.post("/api/generate-token", (req, res) => {
   res.json({ token, channelName });
 });
 
+
+app.post("/generateToken", (req, res) => {
+  const { channelName, uid, role } = req.body;
+
+  if (!channelName || !uid) {
+    return res.status(400).send("Channel name and UID are required.");
+  }
+
+  const expirationTimeInSeconds = 3600;
+  const currentTime = Math.floor(Date.now() / 1000);
+  const privilegeExpirationTime = currentTime + expirationTimeInSeconds;
+
+  const token = RtcTokenBuilder.buildTokenWithUid(
+    APP_ID,
+    APP_CERTIFICATE,
+    channelName,
+    uid,
+    role === "publisher" ? RtcRole.PUBLISHER : RtcRole.SUBSCRIBER,
+    privilegeExpirationTime
+  );
+
+  res.json({ token });
+});
+
 // API Routes
 app.get("/api/doctors", async (req, res) => {
   try {
@@ -76,6 +108,15 @@ app.post("/api/appointments", patientAuthMiddleware, async (req, res) => {
     const appointment = new Appointment({ doctorId: doctor._id, doctorName, patientId: req.patient._id, patientName: req.patient.name, date, time });
     await appointment.save();
     res.status(201).json(appointment);
+  } catch (err) {
+    res.status(500).json({ message: "Error scheduling appointment", error: err });
+  }
+});
+
+app.get("/api/patient/appointments", patientAuthMiddleware, async (req, res) => {
+  try {
+    const appointments = await Appointment.find({patientId: req.patient._id});
+    res.status(201).json({appointments});
   } catch (err) {
     res.status(500).json({ message: "Error scheduling appointment", error: err });
   }
@@ -276,12 +317,96 @@ app.get('/api/doctor/getReports', doctorAuthMiddleware, async (req, res) => {
   }
 });
 
-app.get('/api/patient/getPresciptions', patientAuthMiddleware, async (req, res) => {
+app.get('/api/patient/getPrescriptions', patientAuthMiddleware, async (req, res) => {
   try {
-    const presciptions = await Prescription.find({ patientId: req.patient._id});
+    const prescriptions = await Prescription.find({ patientId: req.patient._id});
+    res.status(200).send({prescriptions});
+  } catch (error) {
+    res.status(500).send('Error retrieving the reports');
+  }
+});
+
+app.get('/api/getPresciptions/:patientId', doctorAuthMiddleware, async (req, res) => {
+  try {
+    const presciptions = await Prescription.find({ patientId: req.params.patientId });
     res.status(200).send({presciptions});
   } catch (error) {
     res.status(500).send('Error retrieving the reports');
+  }
+});
+
+app.get('/api/getHistory/:patientId', doctorAuthMiddleware, async (req, res) => {
+  try {
+    const presciptions = await Prescription.find({ patientId: req.params.patientId });
+    const schema = {
+      description: "Patient history record",
+      type: SchemaType.OBJECT,
+      properties: {
+        patientHistory: {
+          type: SchemaType.STRING,
+          description: "History of the patient",
+          nullable: false,
+        },
+      },
+      required: ["patientHistory"],
+    };
+    
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-pro",
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: schema,
+      },
+    });
+    
+    const result = await model.generateContent(
+      `Give the patient history in a paragraph using the prescriptions of the patient: ${JSON.stringify(presciptions)}`,
+    );
+    console.log(result.response.text());
+    res.status(200).send(JSON.parse(result.response.text()));
+  } catch (error) {
+    res.status(500).send('Error retrieving the reports');
+  }
+});
+
+app.post("/api/patient/addPrescription", doctorAuthMiddleware, async (req, res) => {
+  try {
+    const { illness, patientId, medications } = req.body;
+    const doctorId = req.doctor._id;
+
+    // if (!illness || !doctorId || !doctorName || !patientId || !patientName || !medications || !Array.isArray(medications)) {
+    //   return res.status(400).json({ error: "All fields are required, and medications must be an array." });
+    // }
+
+    const prescription = new Prescription({
+      illness,
+      doctorId,
+      patientId,
+      medications,
+    });
+
+    await prescription.save();
+    res.status(201).json({ message: "Prescription added successfully", prescription });
+  } catch (error) {
+    console.error("Error adding prescription:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.get("/api/patient/latestPrescription", patientAuthMiddleware, async (req, res) => {
+  try {
+    console.log(req);
+      const { patientId } = req.patient._id;
+      const latestPrescription = await Prescription.find({ patientId })
+
+      if (!latestPrescription) {
+          return res.status(404).json({ message: "No prescription found" });
+      }
+
+      res.json({ latestPrescription });
+  } catch (error) {
+      console.error("Error fetching latest prescription:", error);
+      res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -299,6 +424,7 @@ app.get('api/report/:id', async (req, res) => {
     res.status(500).send('Error retrieving the report');
   }
 });
+
 
 // Start Server
 app.listen(PORT, () => {
