@@ -62,7 +62,7 @@ Youtube video link: https://youtu.be/tAv_XemAhVA
 
 This healthcare platform is a modern, scalable web application designed to provide users with an engaging and personalized healthcare management experience. The platform is built using a full-stack architecture with the latest technologies to ensure a responsive, high-performance user interface and robust backend functionality.
 
-At its core, the platform combines React.js for dynamic frontend development, Node.js and Express.js for building fast, scalable server-side APIs, and MongoDB for a flexible and efficient database solution. It also leverages the OpenStreetMap API for geolocation-based features, enhancing user accessibility and convenience.
+At its core, the platform combines React.js for dynamic frontend development, Node.js and Express.js for building fast, scalable server-side APIs, and MongoDB for a flexible and efficient database solution. It also leverages th OpenStreetMap API for geolocation-based features, enhancing user accessibility and convenience.
 
 ### Key Features:
 - **Dynamic Landing Page**:Displays a map of nearby hospitals using device location, powered by OpenStreetMap API.
@@ -76,7 +76,11 @@ At its core, the platform combines React.js for dynamic frontend development, No
 - **Secure Login and Registration**: Separate registration for patients and doctors.
 - **Appointment Scheduling**: Users can schedule appointments seamlessly.
 - **Real-Time Data Synchronization**: Leveraging **MongoDB** for real-time updates on patients reports and patient-doctor interactions.
+- **Agora-Powered Private Video Consultations**: Secure video consultations using Agora with unique meeting IDs.
 
+### Agora Integration for Secure Video Consultations:
+
+A major challenge we faced was that Agora uses a common meeting name, allowing anyone with the name to join. To ensure privacy, we implemented a unique meeting name by combining the unique IDs of the patient and doctor. This way, each meeting is private, preventing unauthorized access
 ### Technology Stack:
 - **Frontend**: 
   - **React.js**: Dynamic and responsive user interface.
@@ -132,9 +136,13 @@ At its core, the platform combines React.js for dynamic frontend development, No
 
       * Schedule Appointments: The platform offers a seamless appointment scheduling system where users can book appointments with doctors based on availability.
 
-7. **Real-Time Data Updates**: All changes made by users (appointments, reports, or profile updates) are instantly synchronized with the backend to provide a consistent and updated user experience.
+6. **Real-Time Data Updates**: All changes made by users (appointments, reports, or profile updates) are instantly synchronized with the backend to provide a consistent and updated user experience.
+
+7. **Secure Video Consultations with Agora**: Patients and doctors can connect privately with unique meeting IDs.
 
 This platform combines a powerful backend with an interactive front-end to create a scalable, robust, and user-friendly healthcare solution. It has been designed to support the growing needs of patients, healthcare professionals, and administrators, ensuring a seamless experience for all.
+ 
+
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -325,9 +333,9 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/SathishAdithiyaaSV/lingo-land?style=for-the-badge
-[contributors-url]: https://github.com/SathishAdithiyaaSV/lingo-land/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/SathishAdithiyaaSV/lingo-land.svg?style=for-the-badge
+[contributors-shield]: https://img.shields.io/github/contributors/gouravanirudh05/healthsync?style=for-the-badge
+[contributors-url]: https://github.com/gouravanirudh05/HealthSync/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/gouravanirudh05/healthsync.svg?style=for-the-badge
 [forks-url]: https://github.com/SathishAdithiyaaSV/lingo-land/network/members
 [stars-shield]: https://img.shields.io/github/stars/SathishAdithiyaaSV/lingo-land.svg?style=for-the-badge
 [stars-url]: https://github.com/SathishAdithiyaaSV/lingo-land/stargazers
