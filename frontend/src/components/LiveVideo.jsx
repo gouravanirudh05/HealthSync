@@ -16,18 +16,14 @@ const LiveVideo = () => {
   const { channelName } = useParams();
 
   const [activeConnection, setActiveConnection] = useState(true);
-
-  // Track the mic/video state
   const [micOn, setMic] = useState(true);
   const [cameraOn, setCamera] = useState(true);
 
-  // Get local video and mic tracks
   const { localMicrophoneTrack } = useLocalMicrophoneTrack(micOn);
   const { localCameraTrack } = useLocalCameraTrack(cameraOn);
 
   const navigate = useNavigate();
 
-  // Join the channel
   useJoin(
     {
       appid: appId,
@@ -39,15 +35,13 @@ const LiveVideo = () => {
 
   usePublish([localMicrophoneTrack, localCameraTrack]);
 
-  // Remote users
   const remoteUsers = useRemoteUsers();
   const { audioTracks } = useRemoteAudioTracks(remoteUsers);
 
-  // Play the remote user audio tracks
   audioTracks.forEach((track) => track.play());
 
   return (
-    <>
+    <div className="flex flex-col items-center gap-4">
       <div className="flex flex-wrap gap-4 justify-center">
         {remoteUsers.map((user) => (
           <div key={user.uid} className="remote-video-container w-64 h-48 bg-black">
@@ -56,7 +50,7 @@ const LiveVideo = () => {
         ))}
       </div>
 
-      <div className="local-video-container w-64 h-48 bg-black mt-4">
+      <div className="local-video-container w-64 h-48 bg-black relative">
         <LocalUser
           audioTrack={localMicrophoneTrack}
           videoTrack={localCameraTrack}
@@ -66,33 +60,32 @@ const LiveVideo = () => {
           playVideo={cameraOn}
           className="w-full h-full object-cover"
         />
-        <div className="flex justify-between mt-2">
-          <div className="flex gap-2">
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              onClick={() => setMic((prev) => !prev)}
-            >
-              Mic
-            </button>
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              onClick={() => setCamera((prev) => !prev)}
-            >
-              Camera
-            </button>
-          </div>
-          <button
-            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-            onClick={() => {
-              setActiveConnection(false);
-              navigate('/');
-            }}
-          >
-            Disconnect
-          </button>
-        </div>
       </div>
-    </>
+      
+      <div className="flex gap-4 mt-4">
+        <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          onClick={() => setMic((prev) => !prev)}
+        >
+          {micOn ? 'Mute Mic' : 'Unmute Mic'}
+        </button>
+        <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          onClick={() => setCamera((prev) => !prev)}
+        >
+          {cameraOn ? 'Turn Off Camera' : 'Turn On Camera'}
+        </button>
+        <button
+          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+          onClick={() => {
+            setActiveConnection(false);
+            navigate('/');
+          }}
+        >
+          Disconnect
+        </button>
+      </div>
+    </div>
   );
 };
 

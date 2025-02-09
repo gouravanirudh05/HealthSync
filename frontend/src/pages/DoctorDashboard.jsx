@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const BACKEND_URL =
   import.meta.env.VITE_APP_BACKEND_URL ?? 'http://localhost:5000';
@@ -83,6 +83,10 @@ const DoctorDashboard = () => {
 
   const navigate = useNavigate();
 
+  const handleJoinCall = (appointmentId) => {
+    navigate(`/meeting-room/${appointmentId}`);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow p-4">
@@ -105,7 +109,7 @@ const DoctorDashboard = () => {
             <tbody>
               {reports.map((report) => (
                 <tr key={report.id} className="hover:bg-gray-50">
-                  <td className="border border-gray-300 px-4 py-2">{report.patientId}</td>
+                  <td className="border border-gray-300 px-4 py-2"><Link to={`/patient/${report.patientId}`}>{report.patientId}</Link></td>
                   <td className="border border-gray-300 px-4 py-2">{report.date}</td>
                   <td className="border border-gray-300 px-4 py-2">{report.name}</td>
                   <td className="border border-gray-300 px-4 py-2">
@@ -138,9 +142,17 @@ const DoctorDashboard = () => {
             <tbody>
               {appointments.map((appointment, index) => (
                 <tr key={index} className="hover:bg-gray-50">
-                  <td className="border border-gray-300 px-4 py-2">{appointment.patientName}</td>
+                  <td className="border border-gray-300 px-4 py-2"><Link to={`/patient/${appointment.patientId}`} >{appointment.patientName}</Link></td>
                   <td className="border border-gray-300 px-4 py-2">{appointment.date}</td>
                   <td className="border border-gray-300 px-4 py-2">{appointment.time}</td>
+                  <td className="border border-gray-300 px-4 py-2">
+                  <button
+                    onClick={() => handleJoinCall(appointment._id)}
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                  >
+                    Join
+                  </button>
+                </td>
                 </tr>
               ))}
             </tbody>
