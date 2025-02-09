@@ -58,7 +58,7 @@
 ![Project](frontend/src/assets/image.png)
 
 
-Youtube video link: https://youtu.be/tAv_XemAhVA
+Youtube video link: https://youtu.be/g3MGxc51N7U
 
 This healthcare platform is a modern, scalable web application designed to provide users with an engaging and personalized healthcare management experience. The platform is built using a full-stack architecture with the latest technologies to ensure a responsive, high-performance user interface and robust backend functionality.
 
