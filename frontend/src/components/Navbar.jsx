@@ -42,9 +42,9 @@ const Navbar = () => {
 
   return (
     <nav className="bg-white shadow-md p-4 flex justify-between items-center">
-      <h1 className="text-2xl font-bold text-blue-600">Healthify</h1>
+      <h1 className="text-2xl font-bold text-blue-600">HealthSync</h1>
       <div className="space-x-4 flex items-center">
-        <Link to="/" className="text-gray-600 hover:text-blue-600">
+        <Link to="/hero" className="text-gray-600 hover:text-blue-600">
           Home
         </Link>
         <Link to="/about" className="text-gray-600 hover:text-blue-600">

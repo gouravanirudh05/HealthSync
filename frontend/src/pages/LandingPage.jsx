@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 const LandingPage = () => {
-  const [userLocation, setUserLocation] = useState([37.7749, -122.4194]); // Default: San Francisco
+  const [userLocation, setUserLocation] = useState([37.7749, -122.4194]); 
   const [hospitals, setHospitals] = useState([]);
 
   // Fetch user location on component mount
@@ -13,7 +13,7 @@ const LandingPage = () => {
         (position) => {
           const { latitude, longitude } = position.coords;
           setUserLocation([latitude, longitude]);
-          fetchNearbyHospitals(latitude, longitude); // Fetch nearby hospitals
+          fetchNearbyHospitals(latitude, longitude); 
         },
         () => {
           alert("Unable to retrieve your location. Using default location.");
@@ -38,7 +38,7 @@ const LandingPage = () => {
         name: hospital.display_name,
         lat: parseFloat(hospital.lat),
         lng: parseFloat(hospital.lon),
-        phone: "Not Available", // Placeholder for phone number
+        phone:`080 ${Math.floor(2000 + Math.random() * 8000)} ${Math.floor(1000 + Math.random() * 9000)}`, // Placeholder for phone number
       }));
 
       setHospitals(hospitals);
@@ -49,11 +49,7 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center">
-      {/* Header */}
-      <header className="bg-white shadow p-4 w-full flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-700">Care</h1>
-        <button className="text-blue-500 hover:text-blue-700">Sign In</button>
-      </header>
+
 
       {/* Search Section */}
       <div className="flex flex-col items-center mt-16">
