@@ -101,6 +101,15 @@ app.get("/api/doctors", async (req, res) => {
   }
 });
 
+app.get("/api/patients", async (req, res) => {
+  try {
+    const patients = await Patient.find();
+    res.json(patients);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching doctors", error: err });
+  }
+});
+
 app.post("/api/appointments", patientAuthMiddleware, async (req, res) => {
   try {
     const { doctorId, doctorName, date, time } = req.body;

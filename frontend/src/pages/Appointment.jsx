@@ -172,7 +172,7 @@ const ScheduleAppointment = () => {
           <button onClick={handleScheduleAppointment} className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">
             Schedule Appointment
           </button>
-          <button onClick={() => navigate("/")} className="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">
+          <button onClick={() => navigate("/patient-dashboard")} className="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">
             Go Back
           </button>
         </div>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast, ToastContainer } from "react-toastify"; // Toast notifications
 
 const BACKEND_URL =
   import.meta.env.VITE_APP_BACKEND_URL ?? 'http://localhost:5000';
@@ -24,6 +25,10 @@ const RegisterDoctor = () => {
       });
 
       const json = await response.json();
+      if(json.message)
+        toast.success(json.message);
+      else if(json.error)
+        toast.error(json.error);
     console.log("Form submitted", formData);
   };
 
@@ -116,6 +121,7 @@ const RegisterDoctor = () => {
           </div>
         </form>
       </div>
+      <ToastContainer />
     </section>
   );
 };

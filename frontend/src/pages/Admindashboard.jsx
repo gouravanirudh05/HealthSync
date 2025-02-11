@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"; // For making HTTP requests
 
@@ -8,6 +8,20 @@ const AdminDashboard = () => {
   const [fileName, setFileName] = useState("");
   const [uploadStatus, setUploadStatus] = useState(null); // To show upload status messages
   const [patientId, setPatientId] = useState("");
+  const [patients, setPatients] = useState([]);
+
+  useEffect(() => {
+    const fetchPatients = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/patients");
+        setPatients(response.data);
+      } catch (error) {
+        console.error("Error fetching patients:", error);
+      }
+    };
+
+    fetchPatients();
+  }, []);
 
   // Handle file selection
   const handleFileChange = (e) => {
@@ -16,8 +30,8 @@ const AdminDashboard = () => {
 
   // Handle report upload
   const handleUpload = async () => {
-    if (!file) {
-      alert("Please select a file to upload");
+    if (!file || !patientId) {
+      alert("Please select a patient and a file to upload");
       return;
     }
 
@@ -25,18 +39,14 @@ const AdminDashboard = () => {
     formData.append("pdf", file);
     formData.append("name", fileName);
     formData.append("patientId", patientId);
+
     const currentDate = new Date();
-
-    const day = String(currentDate.getDate()).padStart(2, '0');
-    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const year = currentDate.getFullYear();
-
-    const formattedDate = `${day}-${month}-${year}`;
+    const formattedDate = currentDate.toISOString().split("T")[0]; // Format YYYY-MM-DD
 
     formData.append("date", formattedDate);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/report/upload", formData, {
+      await axios.post("http://localhost:5000/api/report/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setUploadStatus({ success: true, message: "File uploaded successfully!" });
@@ -65,19 +75,27 @@ const AdminDashboard = () => {
               onChange={(e) => setFileName(e.target.value)}
               className="border p-3 w-full rounded mb-4"
             />
-            <input
-              type="text"
-              placeholder="Patient ID"
+
+            <select
               value={patientId}
               onChange={(e) => setPatientId(e.target.value)}
               className="border p-3 w-full rounded mb-4"
-            />
+            >
+              <option value="">Select Patient</option>
+              {patients.map((patient) => (
+                <option key={patient._id} value={patient._id}>
+                  {patient.name} (ID: {patient._id})
+                </option>
+              ))}
+            </select>
+
             <input
               type="file"
               accept="application/pdf"
               onChange={handleFileChange}
               className="border p-3 w-full rounded mb-4"
             />
+
             <button
               onClick={handleUpload}
               className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
