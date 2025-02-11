@@ -21,7 +21,6 @@
     <a href="https://github.com/gouravanirudh05/HealthSync"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://healthify-nu.vercel.app/">View Demo</a> 
   </p>
 </div>
 
